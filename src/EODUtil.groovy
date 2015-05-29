@@ -73,8 +73,7 @@ def conn = DriverManager.getConnection(conn,user,pwd)
 
 def getEODUtil(sql){
 
-    query="SELECT [Date],N.NodeName,N.NumberOfCores, V.UtilizedTime AS TotalUtilised, V.UtilizedTime / N.NumberOfCores as UtilisedByCore,V.CoreAvailableTime AS TotalAvailable, V.CoreAvailableTime / N.NumberOfCores AS AvailableByCore,V.CoreTotalTime, V.CoreTotalTime / N.NumberOfCores AS TotalByCore FROM HpcReportingView.DailyNodeStatView V INNER JOIN Node N ON N.NodeName = V.NodeName WHERE CONVERT(DATE,[Date]) = CONVERT(DATE,GETDATE()-1) AND N.NumberOfCores IS NOT NULL"
-
+    query="SELECT [Date],N.NodeName,N.NumberOfCores, V.UtilizedTime AS TotalUtilised, V.UtilizedTime / N.NumberOfCores as UtilisedByCore,V.CoreAvailableTime AS TotalAvailable, V.CoreAvailableTime / N.NumberOfCores AS AvailableByCore,V.CoreTotalTime, V.CoreTotalTime / N.NumberOfCores AS TotalByCore FROM HpcReportingView.DailyNodeStatView V INNER JOIN Node N ON N.NodeName = V.NodeName WHERE CONVERT(DATE,[Date]) = CONVERT(DATE,GETUTCDATE()-1) AND N.NumberOfCores IS NOT NULL"
 
     sql.eachRow(query){   row ->
 
