@@ -75,8 +75,7 @@ def conn = DriverManager.getConnection(conn,user,pwd)
 
 	def getHPCLiveCallTotals(sql){
 
-    query="SELECT CURRENT_TIMESTAMP AS 'Timestamp',ISNULL(SUM(NumberOfCalls),0) AS TotalCalls,ISNULL(SUM(NumOfOutstandCalls),0) AS OutstandingCalls, (SELECT ISNULL(SUM(TaskRunning),0) from NodeResourceCounter) as RunningCalls, ISNULL(SUM(NumberOfCalls- NumOfOutstandCalls),0) AS CompletedCalls, ISNULL(AVG(CallDuration),0) AS AvgDuration FROM dbo.Job WHERE NumOfOutstandCalls > 0 AND State < 128 "
-
+    query="SELECT SYSDATETIMEOFFSET() AS 'Timestamp',ISNULL(SUM(NumberOfCalls),0) AS TotalCalls,ISNULL(SUM(NumOfOutstandCalls),0) AS OutstandingCalls, (SELECT ISNULL(SUM(TaskRunning),0) from NodeResourceCounter) as RunningCalls, ISNULL(SUM(NumberOfCalls- NumOfOutstandCalls),0) AS CompletedCalls, ISNULL(AVG(CallDuration),0) AS AvgDuration FROM dbo.Job WHERE NumOfOutstandCalls > 0 AND State < 128"
 
     sql.eachRow(query){   row ->
 
