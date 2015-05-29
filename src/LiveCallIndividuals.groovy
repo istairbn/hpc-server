@@ -1,4 +1,4 @@
-/**
+;/**
  * This script sends a SQL request for the current data from the HPCScheduler.Job database .
  * It counts all the Calls that are currently running and gives total stats
  * It checks to see if today's filename exists - if it does it will not overwrite the data. If it doesn't exist, it will create it!
@@ -74,12 +74,11 @@ def conn = DriverManager.getConnection(conn,user,pwd)
 
 def getHPCLiveCallIndividuals(sql){
 
-    query="SELECT CURRENT_TIMESTAMP AS 'Timestamp', ID, ISNULL(NumberOfCalls,0) AS TotalCalls,ISNULL(NumOfOutstandCalls,0) AS QueuedCalls,ISNULL(NumberOfCalls - NumOfOutstandCalls,0) AS CompletedCalls, CallsPerSecond,CallDuration,Progress, ISNULL(DATEDIFF(MS,CreateTime,SubmitTime),0) AS CR_SUB_MS, ISNULL(DATEDIFF(MS,SubmitTime,StartTime),0) AS SUB_STA_MS, ISNULL(DATEDIFF(S,CreateTime,GETDATE()),0) AS TotalElapsedSecs, ISNULL(DATEDIFF(S,ChangeTime,GetDate()),0) AS ChangeElapsedSecs FROM dbo.Job WHERE State < 128 ORDER BY ID"
-
+    query="SELECT SYSDATETIMEOFFSET() AS 'Timestamp', J.ID, ISNULL(J.NumberOfCalls,0) AS TotalCalls,ISNULL(J.NumOfOutstandCalls,0) AS QueuedCalls,ISNULL(J.NumberOfCalls - J.NumOfOutstandCalls,0) AS CompletedCalls, J.CallsPerSecond,J.CallDuration,J.Progress, ISNULL(DATEDIFF(MS,J.CreateTime,J.SubmitTime),0) AS CR_SUB_MS, ISNULL(DATEDIFF(MS,J.SubmitTime,J.StartTime),0) AS SUB_STA_MS, ISNULL(DATEDIFF(S,J.CreateTime,GETUTCDATE()),0) AS TotalElapsedSecs, ISNULL(DATEDIFF(S,J.ChangeTime,GETUTCDATE()),0) AS ChangeElapsedSecs, T.Name as JobTemplate, J.ServiceName as ServiceName, J.Name as Name, N.Name as Project, P.Name AS Pool FROM dbo.Job J INNER JOIN JobTemplate T ON J.JobTemplateId = T.Id INNER JOIN JobProjectName N ON J.ProjectId = N.ID INNER JOIN Pool P ON J.PoolId = P.ID WHERE State < 128 ORDER BY ID"
 
     sql.eachRow(query){   row ->
 
-		println ("$row.Timestamp,$row.ID,$row.TotalCalls,$row.QueuedCalls,$row.CompletedCalls,$row.CallsPerSecond,$row.CallDuration,$row.Progress,$row.CR_SUB_MS,$row.SUB_STA_MS,$row.TotalElapsedSecs,$row.ChangeElapsedSecs")
+		println ("$row.Timestamp,$row.ID,$row.TotalCalls,$row.QueuedCalls,$row.CompletedCalls,$row.CallsPerSecond,$row.CallDuration,$row.Progress,$row.CR_SUB_MS,$row.SUB_STA_MS,$row.TotalElapsedSecs,$row.ChangeElapsedSecs,$row.JobTemplate,$row.ServiceName,$row.Name,$row.Project,$row.Pool")
     }
 }
 
