@@ -49,7 +49,7 @@ perr = perr == null ? System.err : perr
 
 dbDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver" 
 
-def sqlConnect ="jdbc:sqlserver://$host;instanceName=$instance;DatabaseName=HPCReporting;integratedSecurity=$security"
+def sqlConnect ="jdbc:sqlserver://$host;instanceName=$instance;DatabaseName=HPCScheduler;integratedSecurity=$security"
 
 conn= sqlConnect
 
@@ -75,8 +75,8 @@ def conn = DriverManager.getConnection(conn,user,pwd)
 
 def getEODStats(sql){
 
-    query="SELECT CONVERT(DATE,GETDATE()-1) AS TimeStamp, ServiceName,COUNT(DISTINCT J.ID) AS Jobs,SUM(CASE WHEN t.instanceID <0 THEN NumberOfCalls ELSE 0 END) as Calls,SUM(CASE WHEN t.instanceID <0 THEN(DATEDIFF(SECOND,J.StartTime,J.EndTime)) ELSE 0 END) as JobSeconds,SUM(CASE WHEN t.instanceID <0 THEN(DATEDIFF(Minute,J.StartTime,J.EndTime)) ELSE 0 END) as JobMins,SUM(CASE WHEN t.instanceID <0 THEN CallDuration ELSE 0 END) as Duration , SUM(DATEDIFF(SECOND,T.StartTime,T. EndTime)) AS TaskSecs, SUM(DATEDIFF(MINUTE,T.StartTime,T. EndTime)) AS TaskMins FROM dbo.Job J INNER JOIN dbo.Task T ON J.ID = T.ParentJobId WHERE ServiceName IS NOT NULL AND CONVERT(DATE,J.EndTime) = CONVERT(DATE,GETDATE()-1)GROUP BY ServiceName"
-    
+    query="SELECT CONVERT(DATE,GETUTCDATE()-1) AS TimeStamp, ServiceName,COUNT(DISTINCT J.ID) AS Jobs,SUM(CASE WHEN t.instanceID <0 THEN NumberOfCalls ELSE 0 END) as Calls,SUM(CASE WHEN t.instanceID <0 THEN(DATEDIFF(SECOND,J.StartTime,J.EndTime)) ELSE 0 END) as JobSeconds,SUM(CASE WHEN t.instanceID <0 THEN(DATEDIFF(Minute,J.StartTime,J.EndTime)) ELSE 0 END) as JobMins,SUM(CASE WHEN t.instanceID <0 THEN CallDuration ELSE 0 END) as Duration , SUM(DATEDIFF(SECOND,T.StartTime,T. EndTime)) AS TaskSecs, SUM(DATEDIFF(MINUTE,T.StartTime,T. EndTime)) AS TaskMins FROM dbo.Job J INNER JOIN dbo.Task T ON J.ID = T.ParentJobId WHERE ServiceName IS NOT NULL AND CONVERT(DATE,J.EndTime) = CONVERT(DATE,GETUTCDATE()-1)GROUP BY ServiceName"
+
     sql.eachRow(query){   row ->
 
 		println ("$row.Timestamp 00:00:00,$row.ServiceName,$row.Jobs,$row.Calls,$row.JobSeconds,$row.JobMins,$row.Duration,$row.TaskSecs,$row.TaskMins")
