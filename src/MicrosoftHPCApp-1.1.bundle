@@ -11,6 +11,15 @@
 		<pauseSeconds>0</pauseSeconds>
 		<script>powerShellRunner.groovy clusterOverview.ps1</script>
     </Service>
+    	<Service>
+      	<name>ClusterProperty</name>
+		<resourceSelection>type contains HeadNode</resourceSelection>
+      	<fork>false</fork>
+      	<background>true</background>
+		<instanceCount>-1</instanceCount>
+		<pauseSeconds>0</pauseSeconds>
+		<script>powerShellRunner.groovy clusterProperty.ps1</script>
+    </Service>
 	<Service>
       	<name>NodeMetrics</name>
 		<resourceSelection>type contains HeadNode</resourceSelection>
